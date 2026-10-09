@@ -44,7 +44,7 @@
                     <div class="contact-info-icon">💼</div>
                     <div class="contact-info-details">
                         <h4>@if(app()->getLocale() === 'id') Pusat Konsultasi dan Kemitraan @else Advisory and Partnership Hub @endif</h4>
-                        <p>info@iclo.co.id</p>
+                        <p>unangmulkhan@iclo.co.id</p>
                     </div>
                 </div>
                 
@@ -53,7 +53,7 @@
                     <div class="contact-info-icon">📞</div>
                     <div class="contact-info-details">
                         <h4>@if(app()->getLocale() === 'id') Hotline Telepon/WhatsApp @else Phone Hotline/WhatsApp @endif</h4>
-                        <p>+62 818-2288-288 (Mon - Fri, 08.00 - 17.00 WIB)</p>
+                        <p>+62 811-2555-8822 (Mon - Fri, 08.00 - 17.00 WIB)</p>
                     </div>
                 </div>
             </div>

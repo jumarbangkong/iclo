@@ -129,9 +129,9 @@
                 <h4>{{ __('footer_contact') }}</h4>
                 <ul style="color: rgba(248, 250, 252, 0.75); font-size: 14px; display: flex; flex-direction: column; gap: 8px;">
                     <li><strong>Address:</strong> Menara Astra, Lantai 37 Jl. Jend. Sudirman Kav. 5–6 Jakarta Pusat 10220 Indonesia</li>
-                    <li><strong>Email:</strong> info@iclo.co.id</li>
+                    <li><strong>Email:</strong> unangmulkhan@iclo.co.id</li>
                     <li><strong>Phone:</strong> +62 818-2288-288</li>
-                    <li><strong>Support:</strong> support@iclo.co.id</li>
+                    <li><strong>Support:</strong> unangmulkhan@iclo.co.id</li>
                 </ul>
             </div>
         </div>
