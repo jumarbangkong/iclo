@@ -198,30 +198,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 5. Interactive Pillar Accordion (Research Hub)
-    const researchAccordion = document.getElementById('research-accordion');
-    if (researchAccordion) {
-        const accordionItems = researchAccordion.querySelectorAll('.pillar-accordion-item');
+    const accordions = document.querySelectorAll('.pillar-accordion'); 
+    accordions.forEach(accordion => {
+        if (accordion) {
+            const accordionItems = accordion.querySelectorAll('.pillar-accordion-item');
 
-        accordionItems.forEach((item, index) => {
-            const header = item.querySelector('.pillar-accordion-header');
-            if (!header) return;
+            accordionItems.forEach((item, index) => {
+                const header = item.querySelector('.pillar-accordion-header');
+                if (!header) return;
 
-            header.addEventListener('click', () => {
-                const isCurrentlyActive = item.classList.contains('active');
+                header.addEventListener('click', () => {
+                    const isCurrentlyActive = item.classList.contains('active');
 
-                // Close all accordion items
-                accordionItems.forEach(otherItem => {
-                    otherItem.classList.remove('active');
-                    const otherBtn = otherItem.querySelector('.pillar-accordion-header');
-                    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                    // Close all accordion items
+                    accordionItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        const otherBtn = otherItem.querySelector('.pillar-accordion-header');
+                        if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                    });
+
+                    // If clicked item wasn't active, activate it
+                    if (!isCurrentlyActive) {
+                        item.classList.add('active');
+                        header.setAttribute('aria-expanded', 'true');
+                    }
                 });
-
-                // If clicked item wasn't active, activate it
-                if (!isCurrentlyActive) {
-                    item.classList.add('active');
-                    header.setAttribute('aria-expanded', 'true');
-                }
             });
-        });
-    }
+        }
+    });
 });
+
