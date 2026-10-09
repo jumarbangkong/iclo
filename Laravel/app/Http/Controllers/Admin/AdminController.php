@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -860,7 +860,7 @@ if ($request->hasFile('file_upload')) {
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = time() . '_cover_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/activities');
+            $destinationPath = base_path('../public_html/uploads/activities');
             $file->move($destinationPath, $filename);
             $imagePath = asset('uploads/activities/' . $filename);
         }
@@ -892,7 +892,7 @@ if ($request->hasFile('file_upload')) {
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $imgFile) {
                 $imgName = time() . '_gallery_' . \Illuminate\Support\Str::random(8) . '.' . $imgFile->getClientOriginalExtension();
-                $imgFile->move(public_path('uploads/activities'), $imgName);
+                $imgFile->move(base_path('../public_html/uploads/activities'), $imgName);
                 \App\Models\ActivityImage::create([
                     'activity_id' => $activity->id,
                     'image_path' => asset('uploads/activities/' . $imgName),
@@ -940,7 +940,7 @@ if ($request->hasFile('file_upload')) {
             }
             $file = $request->file('image');
             $filename = time() . '_cover_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/activities');
+            $destinationPath = base_path('../public_html/uploads/activities');
             $file->move($destinationPath, $filename);
             $imagePath = asset('uploads/activities/' . $filename);
         }
@@ -972,7 +972,7 @@ if ($request->hasFile('file_upload')) {
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $imgFile) {
                 $imgName = time() . '_gallery_' . \Illuminate\Support\Str::random(8) . '.' . $imgFile->getClientOriginalExtension();
-                $imgFile->move(public_path('uploads/activities'), $imgName);
+                $imgFile->move(base_path('../public_html/uploads/activities'), $imgName);
                 \App\Models\ActivityImage::create([
                     'activity_id' => $activity->id,
                     'image_path' => asset('uploads/activities/' . $imgName),
