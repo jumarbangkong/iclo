@@ -36,7 +36,10 @@
         <div class="about-vision-mission">
             <!-- Vision -->
             <div class="v-m-block" id="vision-block">
-                <h3>⭐ @if(app()->getLocale() === 'id') VISI @else VISION @endif</h3>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    @if(app()->getLocale() === 'id') VISI @else VISION @endif
+                </h3>
                 <p style="font-size: 15px; font-style: italic; color: var(--primary-dark); font-weight: 500;">
                     "@if(app()->getLocale() === 'id') Menjadi Centre of Excellence terpercaya di Indonesia dalam praktik ketenagakerjaan yang bertanggung jawab dan keselamatan di tempat kerja. @else To be Indonesia's trusted Centre of Excellence for responsible employment and workplace safety. @endif"
                 </p>
@@ -44,7 +47,10 @@
             
             <!-- Mission -->
             <div class="v-m-block" id="mission-block" style="border-left-color: var(--accent);">
-                <h3>🎯 @if(app()->getLocale() === 'id') MISI @else MISSION @endif</h3>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent);"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+                    @if(app()->getLocale() === 'id') MISI @else MISSION @endif
+                </h3>
                 <ul class="v-m-list">
                     @if(app()->getLocale() === 'id')
                         <li>Memajukan praktik ketenagakerjaan yang bertanggung jawab dan keselamatan di tempat kerja melalui solusi yang praktis dan berbasis bukti.</li>

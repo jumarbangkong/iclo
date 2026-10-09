@@ -306,12 +306,16 @@ class AdminController extends Controller
         $this->checkAuth();
         $request->validate([
             'title' => 'required|string|max:255',
+            'title_en' => 'nullable|string|max:255',
             'slug' => 'required|string|unique:articles,slug',
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'nullable|exists:categories,id',
             'excerpt' => 'nullable|string|max:1000',
+            'excerpt_en' => 'nullable|string|max:1000',
             'content' => 'required|string',
+            'content_en' => 'nullable|string',
             'status' => 'required|in:draft,published',
+            'published_at' => 'nullable|date',
             'cover_file' => 'nullable|image|max:4096',
             'cover_url' => 'nullable|string',
         ]);
@@ -331,16 +335,33 @@ if ($request->hasFile('cover_file')) {
 
 $publishedAt = null;
 if ($request->status === 'published') {
-    $publishedAt = now();
+    $publishedAt = $request->input('published_at') ?: now();
 }
+
+        $title_en = $request->title_en;
+        $excerpt_en = $request->excerpt_en;
+        $content_en = $request->content_en;
+
+        if (empty($title_en) && !empty($request->title)) {
+            $title_en = $this->autoTranslate($request->title);
+        }
+        if (empty($excerpt_en) && !empty($request->excerpt)) {
+            $excerpt_en = $this->autoTranslate($request->excerpt);
+        }
+        if (empty($content_en) && !empty($request->content)) {
+            $content_en = $this->autoTranslate($request->content, true);
+        }
 
         Article::create([
             'title' => $request->title,
+            'title_en' => $title_en,
             'slug' => Str::slug($request->slug),
             'author_id' => $request->author_id,
             'category_id' => $request->category_id,
             'excerpt' => $request->excerpt,
+            'excerpt_en' => $excerpt_en,
             'content' => $request->content,
+            'content_en' => $content_en,
             'status' => $request->status,
             'cover_image' => $coverImage,
             'published_at' => $publishedAt,
@@ -365,12 +386,16 @@ if ($request->status === 'published') {
 
         $request->validate([
             'title' => 'required|string|max:255',
+            'title_en' => 'nullable|string|max:255',
             'slug' => 'required|string|unique:articles,slug,' . $id,
             'author_id' => 'required|exists:authors,id',
             'category_id' => 'nullable|exists:categories,id',
             'excerpt' => 'nullable|string|max:1000',
+            'excerpt_en' => 'nullable|string|max:1000',
             'content' => 'required|string',
+            'content_en' => 'nullable|string',
             'status' => 'required|in:draft,published',
+            'published_at' => 'nullable|date',
             'cover_file' => 'nullable|image|max:4096',
             'cover_url' => 'nullable|string',
         ]);
@@ -409,19 +434,36 @@ if ($request->hasFile('cover_file')) {
 }
 
         $publishedAt = $article->published_at;
-        if ($request->status === 'published' && !$article->published_at) {
-            $publishedAt = now();
+        if ($request->status === 'published') {
+            $publishedAt = $request->input('published_at') ?: ($article->published_at ?: now());
         } elseif ($request->status === 'draft') {
             $publishedAt = null;
         }
 
+        $title_en = $request->title_en;
+        $excerpt_en = $request->excerpt_en;
+        $content_en = $request->content_en;
+
+        if (empty($title_en) && !empty($request->title)) {
+            $title_en = $this->autoTranslate($request->title);
+        }
+        if (empty($excerpt_en) && !empty($request->excerpt)) {
+            $excerpt_en = $this->autoTranslate($request->excerpt);
+        }
+        if (empty($content_en) && !empty($request->content)) {
+            $content_en = $this->autoTranslate($request->content, true);
+        }
+
         $article->update([
             'title' => $request->title,
+            'title_en' => $title_en,
             'slug' => Str::slug($request->slug),
             'author_id' => $request->author_id,
             'category_id' => $request->category_id,
             'excerpt' => $request->excerpt,
+            'excerpt_en' => $excerpt_en,
             'content' => $request->content,
+            'content_en' => $content_en,
             'status' => $request->status,
             'cover_image' => $coverImage,
             'published_at' => $publishedAt,
@@ -778,5 +820,217 @@ if ($request->hasFile('file_upload')) {
         $contact = \App\Models\ContactSubmission::findOrFail($id);
         $contact->delete();
         return redirect()->route('admin.contacts.index')->with('success', 'Data kontak berhasil dihapus.');
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              ACTIVITIES CRUD                               */
+    /* -------------------------------------------------------------------------- */
+
+    public function activitiesIndex()
+    {
+        $this->checkAuth();
+        $activities = \App\Models\Activity::orderBy('date', 'desc')->paginate(10);
+        return view('admin.activities.index', compact('activities'));
+    }
+
+    public function activitiesCreate()
+    {
+        $this->checkAuth();
+        return view('admin.activities.create');
+    }
+
+    public function activitiesStore(Request $request)
+    {
+        $this->checkAuth();
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'linkedin_url' => 'nullable|url',
+            'facebook_url' => 'nullable|url',
+            'instagram_url' => 'nullable|url',
+            'youtube_url' => 'nullable|url',
+            'date' => 'nullable|date',
+            'image' => 'nullable|image|max:10240',
+            'images.*' => 'nullable|image|max:10240',
+        ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_cover_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/activities');
+            $file->move($destinationPath, $filename);
+            $imagePath = asset('uploads/activities/' . $filename);
+        }
+
+        $title_en = $request->title_en;
+        $description_en = $request->description_en;
+
+        if (empty($title_en) && !empty($request->title)) {
+            $title_en = $this->autoTranslate($request->title);
+        }
+        if (empty($description_en) && !empty($request->description)) {
+            $description_en = $this->autoTranslate($request->description);
+        }
+
+        $activity = \App\Models\Activity::create([
+            'title' => $request->title,
+            'title_en' => $title_en,
+            'slug' => \Illuminate\Support\Str::slug($request->title),
+            'description' => $request->description,
+            'description_en' => $description_en,
+            'linkedin_url' => $request->linkedin_url,
+            'facebook_url' => $request->facebook_url,
+            'instagram_url' => $request->instagram_url,
+            'youtube_url' => $request->youtube_url,
+            'date' => $request->date,
+            'image' => $imagePath,
+        ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imgFile) {
+                $imgName = time() . '_gallery_' . \Illuminate\Support\Str::random(8) . '.' . $imgFile->getClientOriginalExtension();
+                $imgFile->move(public_path('uploads/activities'), $imgName);
+                \App\Models\ActivityImage::create([
+                    'activity_id' => $activity->id,
+                    'image_path' => asset('uploads/activities/' . $imgName),
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.activities.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+    }
+
+    public function activitiesEdit($id)
+    {
+        $this->checkAuth();
+        $activity = \App\Models\Activity::findOrFail($id);
+        return view('admin.activities.edit', compact('activity'));
+    }
+
+    public function activitiesUpdate(Request $request, $id)
+    {
+        $this->checkAuth();
+        $activity = \App\Models\Activity::findOrFail($id);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'title_en' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'description_en' => 'nullable|string',
+            'linkedin_url' => 'nullable|url',
+            'facebook_url' => 'nullable|url',
+            'instagram_url' => 'nullable|url',
+            'youtube_url' => 'nullable|url',
+            'date' => 'nullable|date',
+            'image' => 'nullable|image|max:10240',
+            'images.*' => 'nullable|image|max:10240',
+        ]);
+
+        $imagePath = $activity->image;
+        if ($request->hasFile('image')) {
+            if ($activity->image && str_contains($activity->image, 'uploads/activities/')) {
+                $oldFilename = basename($activity->image);
+                $oldImagePath = public_path('uploads/activities/' . $oldFilename);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+            $file = $request->file('image');
+            $filename = time() . '_cover_' . \Illuminate\Support\Str::random(8) . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/activities');
+            $file->move($destinationPath, $filename);
+            $imagePath = asset('uploads/activities/' . $filename);
+        }
+
+        $title_en = $request->title_en;
+        $description_en = $request->description_en;
+
+        if (empty($title_en) && !empty($request->title)) {
+            $title_en = $this->autoTranslate($request->title);
+        }
+        if (empty($description_en) && !empty($request->description)) {
+            $description_en = $this->autoTranslate($request->description);
+        }
+
+        $activity->update([
+            'title' => $request->title,
+            'title_en' => $title_en,
+            'slug' => \Illuminate\Support\Str::slug($request->title),
+            'description' => $request->description,
+            'description_en' => $description_en,
+            'linkedin_url' => $request->linkedin_url,
+            'facebook_url' => $request->facebook_url,
+            'instagram_url' => $request->instagram_url,
+            'youtube_url' => $request->youtube_url,
+            'date' => $request->date,
+            'image' => $imagePath,
+        ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imgFile) {
+                $imgName = time() . '_gallery_' . \Illuminate\Support\Str::random(8) . '.' . $imgFile->getClientOriginalExtension();
+                $imgFile->move(public_path('uploads/activities'), $imgName);
+                \App\Models\ActivityImage::create([
+                    'activity_id' => $activity->id,
+                    'image_path' => asset('uploads/activities/' . $imgName),
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.activities.index')->with('success', 'Kegiatan berhasil diperbarui!');
+    }
+
+    public function activitiesDestroy($id)
+    {
+        $this->checkAuth();
+        $activity = \App\Models\Activity::findOrFail($id);
+        
+        if ($activity->image && str_contains($activity->image, 'uploads/activities/')) {
+            $filename = basename($activity->image);
+            $imagePath = public_path('uploads/activities/' . $filename);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        foreach ($activity->images as $galleryImg) {
+            if ($galleryImg->image_path && str_contains($galleryImg->image_path, 'uploads/activities/')) {
+                $galFilename = basename($galleryImg->image_path);
+                $galImagePath = public_path('uploads/activities/' . $galFilename);
+                if (file_exists($galImagePath)) {
+                    unlink($galImagePath);
+                }
+            }
+        }
+        
+        $activity->delete();
+        return redirect()->route('admin.activities.index')->with('success', 'Kegiatan berhasil dihapus.');
+    }
+
+    /**
+     * Auto Translate helper using DeepL
+     */
+    private function autoTranslate($text, $isHtml = false)
+    {
+        if (empty(trim((string)$text))) return $text;
+        try {
+            $authKey = env('DEEPL_API_KEY', '758d8b08-6513-4263-b6e4-f15ffdfdd255:fx');
+            $translator = new \DeepL\Translator($authKey);
+            
+            $options = [];
+            if ($isHtml) {
+                $options['tag_handling'] = 'html';
+            }
+            
+            // Translate from Indonesian to US English
+            $result = $translator->translateText($text, 'id', 'en-us', $options);
+            return $result->text;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Auto translate failed (DeepL): ' . $e->getMessage());
+            return $text;
+        }
     }
 }

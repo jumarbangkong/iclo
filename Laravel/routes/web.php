@@ -45,8 +45,15 @@ use App\Http\Controllers\ArticleController;
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
+// Public Activities Routes
+Route::get('/activities', [PageController::class, 'activities'])->name('activities.index');
+Route::get('/activities/{slug}', [PageController::class, 'activity'])->name('activities.show');
+
 // Admin Panel Routes
 use App\Http\Controllers\Admin\AdminController;
+
+Route::redirect('/login', '/admin/login')->name('login');
+
 Route::prefix('admin')->group(function () {
     // Auth
     Route::get('/login', [AdminController::class, 'showLogin'])->name('admin.login');
@@ -113,5 +120,13 @@ Route::prefix('admin')->group(function () {
     Route::get('/contacts/export/excel', [AdminController::class, 'contactsExportExcel'])->name('admin.contacts.export.excel');
     Route::get('/contacts/{id}', [AdminController::class, 'contactsShow'])->name('admin.contacts.show');
     Route::delete('/contacts/{id}', [AdminController::class, 'contactsDestroy'])->name('admin.contacts.destroy');
+
+    // Activities
+    Route::get('/activities', [AdminController::class, 'activitiesIndex'])->name('admin.activities.index');
+    Route::get('/activities/create', [AdminController::class, 'activitiesCreate'])->name('admin.activities.create');
+    Route::post('/activities', [AdminController::class, 'activitiesStore'])->name('admin.activities.store');
+    Route::get('/activities/{id}/edit', [AdminController::class, 'activitiesEdit'])->name('admin.activities.edit');
+    Route::put('/activities/{id}', [AdminController::class, 'activitiesUpdate'])->name('admin.activities.update');
+    Route::delete('/activities/{id}', [AdminController::class, 'activitiesDestroy'])->name('admin.activities.destroy');
 });
 

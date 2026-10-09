@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['author_id', 'title', 'slug', 'category_id', 'content', 'excerpt', 'cover_image', 'published_at', 'status'])]
+#[Fillable(['author_id', 'title', 'title_en', 'slug', 'category_id', 'content', 'content_en', 'excerpt', 'excerpt_en', 'cover_image', 'published_at', 'status'])]
 class Article extends Model
 {
     use HasFactory;
@@ -36,6 +36,30 @@ class Article extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function getTitleAttribute($value)
+    {
+        if (app()->getLocale() !== 'id' && !empty($this->attributes['title_en']) && !request()->is('admin*')) {
+            return $this->attributes['title_en'];
+        }
+        return $value;
+    }
+
+    public function getExcerptAttribute($value)
+    {
+        if (app()->getLocale() !== 'id' && !empty($this->attributes['excerpt_en']) && !request()->is('admin*')) {
+            return $this->attributes['excerpt_en'];
+        }
+        return $value;
+    }
+
+    public function getContentAttribute($value)
+    {
+        if (app()->getLocale() !== 'id' && !empty($this->attributes['content_en']) && !request()->is('admin*')) {
+            return $this->attributes['content_en'];
+        }
+        return $value;
     }
 
     /**

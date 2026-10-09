@@ -51,6 +51,22 @@ body.admin-body {
     padding: 24px 0;
     margin: 0;
     flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar for Sidebar Menu */
+.admin-sidebar-menu::-webkit-scrollbar {
+    width: 6px;
+}
+.admin-sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05); 
+}
+.admin-sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2); 
+    border-radius: 10px;
+}
+.admin-sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4); 
 }
 
 .admin-sidebar-item {

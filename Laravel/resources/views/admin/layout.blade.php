@@ -30,6 +30,11 @@
                     📄 Kelola Artikel
                 </a>
             </li>
+            <li class="admin-sidebar-item">
+                <a href="{{ route('admin.activities.index') }}" class="admin-sidebar-link {{ request()->routeIs('admin.activities.*') ? 'active' : '' }}">
+                    🗓️ Kelola Kegiatan (Events)
+                </a>
+            </li>
 
             <li class="admin-sidebar-item">
                 <a href="{{ route('admin.authors.index') }}" class="admin-sidebar-link {{ request()->routeIs('admin.authors.*') ? 'active' : '' }}">

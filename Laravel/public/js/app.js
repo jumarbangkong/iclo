@@ -196,4 +196,33 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-in-on-scroll').forEach((el) => {
         observer.observe(el);
     });
+
+    // 5. Interactive Pillar Accordions
+    const accordions = document.querySelectorAll('.pillar-accordion');
+    
+    accordions.forEach(accordion => {
+        const accordionItems = accordion.querySelectorAll('.pillar-accordion-item');
+
+        accordionItems.forEach((item, index) => {
+            const header = item.querySelector('.pillar-accordion-header');
+            if (!header) return;
+
+            header.addEventListener('click', () => {
+                const isCurrentlyActive = item.classList.contains('active');
+
+                // Close all accordion items in THIS accordion
+                accordionItems.forEach(otherItem => {
+                    otherItem.classList.remove('active');
+                    const otherBtn = otherItem.querySelector('.pillar-accordion-header');
+                    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+                });
+
+                // If clicked item wasn't active, activate it
+                if (!isCurrentlyActive) {
+                    item.classList.add('active');
+                    header.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    });
 });

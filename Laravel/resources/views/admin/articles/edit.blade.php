@@ -40,6 +40,11 @@
                     </div>
 
                     <div class="admin-form-group">
+                        <label for="title_en" class="admin-form-label">Judul Artikel K3 / Hubungan Kerja (English)</label>
+                        <input type="text" name="title_en" id="title_en" class="admin-form-input" placeholder="Enter an interesting article title..." value="{{ old('title_en', $article->title_en) }}">
+                    </div>
+
+                    <div class="admin-form-group">
                         <label for="slug" class="admin-form-label">Slug / Permalink URL</label>
                         <input type="text" name="slug" id="slug" class="admin-form-input" placeholder="judul-artikel-otomatis-terbentuk" value="{{ old('slug', $article->slug) }}" required>
                         <span class="admin-form-help">Slug digunakan sebagai alamat web artikel (URL). Contoh: <code>/articles/judul-artikel</code></span>
@@ -61,8 +66,18 @@
                     </div>
 
                     <div class="admin-form-group">
+                        <label for="excerpt_en" class="admin-form-label">Ringkasan / Excerpt (English)</label>
+                        <textarea name="excerpt_en" id="excerpt_en" class="admin-form-textarea" style="min-height: 80px;" placeholder="Write a summary of the article... (English)">{{ old('excerpt_en', $article->excerpt_en) }}</textarea>
+                    </div>
+
+                    <div class="admin-form-group">
                         <label for="content" class="admin-form-label">Konten Lengkap Artikel</label>
                         <textarea name="content" id="content" class="admin-form-textarea" style="min-height: 400px;" placeholder="Tuliskan artikel lengkap Anda di sini...">{{ old('content', $article->content) }}</textarea>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="content_en" class="admin-form-label">Konten Lengkap Artikel (English)</label>
+                        <textarea name="content_en" id="content_en" class="admin-form-textarea" style="min-height: 400px;" placeholder="Write your full article here...">{{ old('content_en', $article->content_en) }}</textarea>
                     </div>
                 </div>
                 
@@ -86,6 +101,12 @@
                             <option value="published" {{ old('status', $article->status) == 'published' ? 'selected' : '' }}>Terbitkan Langsung (Published)</option>
                         </select>
                         <span class="admin-form-help">Gunakan 'Draft' untuk menyembunyikan artikel dari halaman depan.</span>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="published_at" class="admin-form-label">Tanggal Publikasi</label>
+                        <input type="date" name="published_at" id="published_at" class="admin-form-input" value="{{ old('published_at', $article->published_at ? $article->published_at->format('Y-m-d') : date('Y-m-d')) }}">
+                        <span class="admin-form-help">Pilih tanggal artikel ini diterbitkan (bisa diubah sesuai keinginan).</span>
                     </div>
 
                     <div class="admin-form-group" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px;">
@@ -171,7 +192,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.2/tinymce.min.js"></script>
 <script>
     tinymce.init({
-        selector: '#content',
+        selector: '#content, #content_en',
         height: 500,
         plugins: [
             'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',

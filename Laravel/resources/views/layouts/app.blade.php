@@ -63,6 +63,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{ route('resources') }}" id="nav-resources-btn">{{ __('nav_resources') }}</a></li>
                             <li><a href="{{ route('articles.index') }}" id="nav-articles-btn">{{ __('nav_articles') }}</a></li>
+                            <li><a href="{{ url('/#events') }}" id="nav-events-btn">@if(app()->getLocale() === 'id') Event and News @else Events and News @endif</a></li>
                         </ul>
                     </li>
                     <li class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">

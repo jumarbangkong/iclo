@@ -17,7 +17,32 @@ class PageController extends Controller
             ->orderBy('published_at', 'desc')
             ->take(3)
             ->get();
-        return view('home', compact('articles'));
+            
+        $activities = \App\Models\Activity::orderBy('date', 'desc')->take(6)->get();
+            
+        return view('home', compact('articles', 'activities'));
+    }
+
+    public function activities()
+    {
+        $activities = \App\Models\Activity::with('images')->orderBy('date', 'desc')->paginate(12);
+        return view('activities.index', compact('activities'));
+    }
+
+    public function activity($slug)
+    {
+        // Try finding by slug first, if not found try by ID
+        $activity = \App\Models\Activity::with('images')->where('slug', $slug)->first();
+        if (!$activity) {
+            $activity = \App\Models\Activity::with('images')->findOrFail($slug);
+        }
+        
+        $relatedActivities = \App\Models\Activity::where('id', '!=', $activity->id)
+            ->orderBy('date', 'desc')
+            ->take(5)
+            ->get();
+            
+        return view('activities.show', compact('activity', 'relatedActivities'));
     }
 
     public function about()

@@ -41,6 +41,48 @@
     </div>
 </section>
 
+<!-- PART 1.5: Event & News -->
+@if(isset($activities) && $activities->count() > 0)
+<section id="events" class="section-padding" style="background-color: var(--bg-warm);">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+            <div>
+                <h2 class="premium-heading" style="color: var(--primary-dark); margin-bottom: 0; font-size: 28px;">@if(app()->getLocale() === 'id') Event and News @else Events and News @endif</h2>
+            </div>
+            <a href="{{ route('activities.index') }}" style="color: var(--primary-dark); text-decoration: none; font-weight: 500; border: 1px solid var(--primary-dark); padding: 8px 16px; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.3s;">
+                @if(app()->getLocale() === 'id') Lihat Banyak @else See More @endif <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <div class="swipe-slider fade-in-on-scroll" style="padding-top: 10px;">
+            @foreach($activities as $activity)
+                <a href="{{ route('activities.show', $activity->slug ?: $activity->id) }}" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="expert-card" style="background: white; overflow: hidden; border: 1px solid var(--border-color); display: flex; flex-direction: column; border-radius: 8px; box-shadow: var(--shadow-sm); transition: transform 0.3s, box-shadow 0.3s;">
+                        @if($activity->image)
+                            <img src="{{ $activity->image }}" alt="{{ $activity->title }}" style="width: 100%; height: 180px; object-fit: cover;">
+                        @else
+                            <div style="width: 100%; height: 180px; background-color: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                                <i class="fas fa-image" style="font-size: 40px; opacity: 0.5;"></i>
+                            </div>
+                        @endif
+                        <div style="padding: 24px 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: left;">
+                            @if($activity->date)
+                                <span style="color: #94a3b8; font-size: 14px; font-weight: 600; margin-bottom: 12px; display: block;">{{ \Carbon\Carbon::parse($activity->date)->format('d M Y') }}</span>
+                            @endif
+                            <h3 style="font-size: 20px; color: #0078d4; margin-bottom: 12px; line-height: 1.3; font-weight: 700;">{{ Str::limit($activity->title, 60) }}</h3>
+                            
+                            <p style="font-size: 16px; color: #64748b; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                {{ Str::limit(strip_tags($activity->description), 100) }}
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- PART 2: Two Pillars of ICLO Services (Asymmetrical Layout) -->
 <section class="pillars-premium section-padding-lg">
     <div class="container">
@@ -48,7 +90,18 @@
         <!-- Pillar 1: Research Hub -->
         <div class="pillar-row pillar-row-right fade-in-on-scroll">
             <div class="pillar-image-col">
-                <img src="{{asset('images/Riset.jpg')}}" alt="Research Hub" class="premium-img-rounded">
+                <div class="pillar-image-wrapper">
+                    <img src="{{ asset('images/research-center-new.jpg') }}" alt="Pusat Riset ICLO" class="premium-img-rounded" id="research-main-img">
+                    <div class="pillar-floating-badge">
+                        <div class="badge-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <div class="badge-text">
+                            <span class="badge-title">@if(app()->getLocale() === 'id') Pusat Riset Terapan @else Applied Research Hub @endif</span>
+                            <span class="badge-subtitle">@if(app()->getLocale() === 'id') Berbasis Bukti & Data Riil @else Evidence & Data-Driven @endif</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="pillar-content-col">
                 <span class="premium-label">01 // @if(app()->getLocale() === 'id') PUSAT RISET @else RESEARCH HUB @endif</span>
@@ -60,28 +113,146 @@
                         We deliver applied research that helps organisations understand workforce challenges, identify labour and workplace risks, assess emerging trends, and make informed decisions. Our research supports responsible employment, occupational health and safety, responsible business practices, and sustainable supply chains through practical, evidence-based insights.
                     @endif
                 </p>
-                <ul class="premium-list">
-                    @if(app()->getLocale() === 'id')
-                        <li>Studi baseline dan diagnosis</li>
-                        <li>Kajian risiko ketenagakerjaan dan tempat kerja</li>
-                        <li>Studi Keselamatan dan Kesehatan Kerja (K3)</li>
-                        <li>Kajian rantai pasok yang bertanggung jawab</li>
-                        <li>Analisis tenaga kerja dan masa depan dunia kerja</li>
-                        <li>Kajian kebijakan dan regulasi</li>
-                        <li>Intelijen sektor dan industri</li>
-                        <li>Outlook, indeks, dan produk pengetahuan</li>
-                    @else
-                        <li>Baseline and diagnostic studies</li>
-                        <li>Labour and workplace risk assessments</li>
-                        <li>Occupational Health and Safety studies</li>
-                        <li>Responsible supply chain research</li>
-                        <li>Workforce and future of work analysis</li>
-                        <li>Policy and regulatory studies</li>
-                        <li>Sector and industry intelligence</li>
-                        <li>Outlook reports, indices, and knowledge products</li>
-                    @endif
-                </ul>
-                <a href="{{ route('services') }}" class="btn-premium-outline mt-4">@if(app()->getLocale() === 'id') Pelajari Riset Kami @else Explore Our Research @endif →</a>
+
+                <!-- Interactive Accordion -->
+                <div class="pillar-accordion" id="research-accordion">
+                    <!-- Item 1 -->
+                    <div class="pillar-accordion-item active">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="true">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">01</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Studi Baseline, Diagnosis & Risiko Tenaga Kerja @else Baseline Studies & Workplace Risk Assessments @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Pemetaan mendalam kondisi ketenagakerjaan, identifikasi kesenjangan kepatuhan norma kerja, evaluasi profil demografi pekerja, serta analisis risiko keselamatan dan operasional di tingkat perusahaan maupun rantai nilai.
+                                    @else
+                                        Comprehensive mapping of workplace conditions, labour standard compliance gaps, workforce demographic analysis, and operational safety risk assessments across enterprise value chains.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-check"></i> @if(app()->getLocale() === 'id') Studi Baseline @else Baseline Studies @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-check"></i> @if(app()->getLocale() === 'id') Kajian Risiko Kerja @else Workplace Risk @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-check"></i> @if(app()->getLocale() === 'id') Diagnosis Kepatuhan @else Compliance Diagnostics @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">02</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Keselamatan & Kesehatan Kerja (K3) serta Regulasi @else Occupational Health & Safety (OSH) & Regulatory Studies @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Riset spesifik tentang efektivitas SMK3 (PP 50/2012), ISO 45001, mitigasi bahaya ergonomi & kimia, penanganan risiko psikososial, serta telaah harmonisasi regulasi nasional dengan standar konvensi ILO.
+                                    @else
+                                        Targeted research on SMK3 (PP 50/2012) efficacy, ISO 45001 implementation, ergonomic & chemical hazard mitigation, psychosocial risks, and alignment with international ILO conventions.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-shield-alt"></i> @if(app()->getLocale() === 'id') Audit SMK3 @else SMK3 Audit @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-heartbeat"></i> @if(app()->getLocale() === 'id') Risiko Psikososial @else Psychosocial Risk @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-balance-scale"></i> @if(app()->getLocale() === 'id') Kepatuhan Regulasi @else Regulatory Compliance @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">03</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Rantai Pasok Bertanggung Jawab & Uji Tuntas HAM @else Responsible Supply Chains & Human Rights Due Diligence @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Investigasi dan pemantauan rantai pasok terhadap risiko kerja paksa, pekerja anak, diskriminasi gender, serta pendampingan uji tuntas hak asasi manusia (HRDD) dan integrasi pilar sosial ESG bagi pemasok lokal.
+                                    @else
+                                        Supply chain risk tracing for forced labour, child labour, gender discrimination, and end-to-end guidance on Human Rights Due Diligence (HRDD) and ESG social governance for suppliers.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-link"></i> @if(app()->getLocale() === 'id') Rantai Pasok @else Supply Chains @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-hand-holding-heart"></i> @if(app()->getLocale() === 'id') Uji Tuntas HAM (HRDD) @else HRDD @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-leaf"></i> @if(app()->getLocale() === 'id') Kinerja Sosial ESG @else ESG Social @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">04</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Analisis Kebijakan & Masa Depan Dunia Kerja @else Policy Analysis & Future of Work @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Kajian strategis tentang dampak otomatisasi teknologi, transisi hijau & transisi berkeadilan (Just Transition), dinamika ketenagakerjaan pasca-UU Cipta Kerja, serta perumusan naskah kebijakan berbasis bukti.
+                                    @else
+                                        Strategic analysis on technological automation impacts, Just Transition dynamics, post-Omnibus Law labour landscapes, and evidence-driven policy formulation for decision-makers.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-robot"></i> @if(app()->getLocale() === 'id') Masa Depan Kerja @else Future of Work @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-seedling"></i> @if(app()->getLocale() === 'id') Transisi Berkeadilan @else Just Transition @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-file-contract"></i> @if(app()->getLocale() === 'id') Advokasi Kebijakan @else Policy Advocacy @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 5 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">05</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Intelijen Sektor, Outlook & Produk Pengetahuan @else Sector Intelligence, Industry Outlook & Indices @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Penyusunan benchmark industri per sektor kunci (pertambangan, energi, garmen, perkebunan kelapa sawit, manufaktur), penerbitan indeks keselamatan tahunan, serta modul pengetahuan praktis.
+                                    @else
+                                        Sector benchmarks for key industries (mining, energy, garments, palm oil, manufacturing), annual safety index releases, and applied industry whitepapers.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-chart-line"></i> @if(app()->getLocale() === 'id') Outlook Industri @else Industry Outlook @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-industry"></i> @if(app()->getLocale() === 'id') Benchmark Sektoral @else Sector Benchmark @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-book-open"></i> @if(app()->getLocale() === 'id') Produk Pengetahuan @else Knowledge Products @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ route('services') }}" class="btn-premium-outline mt-2">@if(app()->getLocale() === 'id') Pelajari Riset Kami @else Explore Our Research @endif →</a>
             </div>
         </div>
 
@@ -97,32 +268,133 @@
                         We help organisations build responsible workplaces by strengthening labour, human rights, and workplace safety practices while aligning business operations with evolving regulatory requirements, stakeholder expectations, and recognised national and international standards.
                     @endif
                 </p>
-                <ul class="premium-list">
-                    @if(app()->getLocale() === 'id')
-                        <li>Responsible Business Conduct (RBC)</li>
-                        <li>Human Rights Due Diligence (HRDD)</li>
-                        <li>Responsible Employment</li>
-                        <li>Keselamatan dan Kesehatan Kerja (K3)</li>
-                        <li>Rantai Pasok yang Bertanggung Jawab</li>
-                        <li>Kinerja Sosial ESG</li>
-                        <li>Manajemen Risiko Ketenagakerjaan dan K3</li>
-                        <li>Pengembangan Kebijakan dan Strategi</li>
-                    @else
-                        <li>Responsible Business Conduct (RBC)</li>
-                        <li>Human Rights Due Diligence (HRDD)</li>
-                        <li>Responsible Employment</li>
-                        <li>Occupational Health & Safety (OHS)</li>
-                        <li>Responsible Supply Chains</li>
-                        <li>ESG Social Performance</li>
-                        <li>Labour & OHS Risk Managemen</li>
-                        <li>Policy and Strategy Development</li>
-                    @endif
-                </ul>
-                <a href="{{ route('services') }}" class="btn-premium-solid mt-4">@if(app()->getLocale() === 'id') Layanan Konsultasi @else Request Assessment @endif →</a>
+
+                <!-- Interactive Accordion -->
+                <div class="pillar-accordion" id="advisory-accordion">
+                    <!-- Item 1 -->
+                    <div class="pillar-accordion-item active">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="true">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">01</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Responsible Business Conduct (RBC) & HRDD @else Responsible Business Conduct (RBC) & HRDD @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Pendampingan penerapan prinsip bisnis bertanggung jawab sesuai OECD Guidelines dan UN Guiding Principles, termasuk asesmen uji tuntas hak asasi manusia (HRDD), analisis risiko dampak sosial, serta pengembangan kebijakan dan mekanisme pemulihan.
+                                    @else
+                                        Implementation guidance for responsible business principles aligned with OECD Guidelines and UN Guiding Principles, including HRDD assessments, social impact risk analysis, and remediation mechanism development.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-handshake"></i> RBC</span>
+                                    <span class="accordion-tag"><i class="fas fa-hand-holding-heart"></i> HRDD</span>
+                                    <span class="accordion-tag"><i class="fas fa-gavel"></i> @if(app()->getLocale() === 'id') Kepatuhan Internasional @else Intl. Compliance @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">02</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Keselamatan & Kesehatan Kerja (K3) dan Sertifikasi @else Occupational Health & Safety (OHS) and Certification @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Audit sistem manajemen K3 (SMK3 PP 50/2012), pendampingan sertifikasi ISO 45001, penilaian risiko tempat kerja, inspeksi keselamatan, serta pengembangan program K3 yang komprehensif dan berkelanjutan.
+                                    @else
+                                        SMK3 management system audits (PP 50/2012), ISO 45001 certification support, workplace risk assessments, safety inspections, and comprehensive OHS programme development.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-shield-alt"></i> SMK3</span>
+                                    <span class="accordion-tag"><i class="fas fa-certificate"></i> ISO 45001</span>
+                                    <span class="accordion-tag"><i class="fas fa-hard-hat"></i> @if(app()->getLocale() === 'id') Audit K3 @else OHS Audit @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">03</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Rantai Pasok Bertanggung Jawab & Kinerja Sosial ESG @else Responsible Supply Chains & ESG Social Performance @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Asesmen dan pendampingan pemasok/kontraktor untuk memenuhi standar ketenagakerjaan internasional, pencegahan kerja paksa dan pekerja anak, integrasi pilar sosial ESG, serta peningkatan kapabilitas rantai pasok lokal.
+                                    @else
+                                        Supplier/contractor assessments and advisory for international labour standards compliance, forced labour and child labour prevention, ESG social pillar integration, and local supply chain capability building.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-link"></i> @if(app()->getLocale() === 'id') Rantai Pasok @else Supply Chain @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-leaf"></i> ESG</span>
+                                    <span class="accordion-tag"><i class="fas fa-users"></i> @if(app()->getLocale() === 'id') Kapabilitas Pemasok @else Supplier Dev. @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="pillar-accordion-item">
+                        <button class="pillar-accordion-header" type="button" aria-expanded="false">
+                            <div class="accordion-header-left">
+                                <span class="accordion-num">04</span>
+                                <h4 class="accordion-title">@if(app()->getLocale() === 'id') Manajemen Risiko & Pengembangan Kebijakan Strategis @else Risk Management & Strategic Policy Development @endif</h4>
+                            </div>
+                            <span class="accordion-chevron"><i class="fas fa-chevron-down"></i></span>
+                        </button>
+                        <div class="pillar-accordion-body">
+                            <div class="pillar-accordion-content">
+                                <p class="pillar-accordion-desc">
+                                    @if(app()->getLocale() === 'id')
+                                        Penyusunan kerangka manajemen risiko ketenagakerjaan dan K3, pengembangan kebijakan internal perusahaan, peta jalan (roadmap) kepatuhan regulasi, serta perencanaan strategis untuk penguatan tata kelola organisasi.
+                                    @else
+                                        Labour and OHS risk management framework development, internal corporate policy formulation, regulatory compliance roadmaps, and strategic planning for organisational governance improvement.
+                                    @endif
+                                </p>
+                                <div class="accordion-tags">
+                                    <span class="accordion-tag"><i class="fas fa-exclamation-triangle"></i> @if(app()->getLocale() === 'id') Manajemen Risiko @else Risk Management @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-file-contract"></i> @if(app()->getLocale() === 'id') Kebijakan Internal @else Policy Dev. @endif</span>
+                                    <span class="accordion-tag"><i class="fas fa-road"></i> @if(app()->getLocale() === 'id') Peta Jalan Strategis @else Strategic Roadmap @endif</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ route('services') }}" class="btn-premium-solid mt-2">@if(app()->getLocale() === 'id') Layanan Konsultasi @else Request Assessment @endif →</a>
             </div>
             <div class="pillar-image-col">
-                <!-- Placeholder for: tangan memegang formulir pajak dengan kalkulator dan laptop -->
-                <img src="{{asset('images/konsultasi2.jpeg')}}" alt="Advisory & Audit" class="premium-img-rounded">
+                <div class="pillar-image-wrapper">
+                    <img src="{{ asset('images/konsultasi2.jpeg') }}" alt="Konsultasi & Audit ICLO" class="premium-img-rounded" id="advisory-main-img">
+                    <div class="pillar-floating-badge" style="left: 20px; right: auto;">
+                        <div class="badge-icon" style="background: linear-gradient(135deg, #2FA084 0%, #217A64 100%);">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="badge-text">
+                            <span class="badge-title">@if(app()->getLocale() === 'id') Konsultasi Strategis @else Strategic Advisory @endif</span>
+                            <span class="badge-subtitle">@if(app()->getLocale() === 'id') Audit & Sertifikasi @else Audit & Certification @endif</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
