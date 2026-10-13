@@ -10,7 +10,7 @@
 <section class="hero-premium" style="min-height: 300px; height: 40vh; text-align: left;">
     <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2071&auto=format&fit=crop" alt="Article Header" class="hero-premium-bg" style="filter: brightness(0.6);">
     <div class="hero-premium-overlay" style="background: linear-gradient(to right, rgba(15, 26, 92, 0.95), rgba(15, 26, 92, 0.6));"></div>
-    <div class="hero-premium-content container" style="padding-top: 0; text-align: left; max-width: 100%;">
+    <div class="hero-premium-content container" style="padding-top: 0; text-align: left; max-width: 1200px; width: 100%;">
         <div style="margin-bottom: 20px; font-size: 14px; color: rgba(255,255,255,0.6);">
             <a href="{{ route('home') }}" style="color: var(--accent);">Beranda</a> &gt; 
             <a href="{{ route('articles.index') }}" style="color: var(--accent);">Artikel</a> &gt; 
@@ -45,7 +45,7 @@
 </section>
 
 <!-- Article Body Content -->
-<section style="background-color: white; padding: 20px">
+<section style="background-color: white;">
     <div class="container article-detail-layout">
         
         <!-- Left Main Content Column -->
