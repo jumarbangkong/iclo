@@ -30,6 +30,7 @@ Route::get('/experts/agung-satrio-wicaksono', [PageController::class, 'expert'])
 Route::get('/experts/bayu-arie-fianto', [PageController::class, 'expert'])->defaults('slug', 'bayu-arie-fianto')->name('experts.bayu-arie-fianto');
 Route::get('/experts/nayla-adila-taqiyya', [PageController::class, 'expert'])->defaults('slug', 'nayla-adila-taqiyya')->name('experts.nayla-adila-taqiyya');
 Route::get('/experts/muhammad-nur-ar-royyan', [PageController::class, 'expert'])->defaults('slug', 'muhammad-nur-ar-royyan')->name('experts.muhammad-nur-ar-royyan');
+Route::get('/experts/mamay-mayyizah', [PageController::class, 'expert'])->defaults('slug', 'mamay-mayyizah')->name('experts.mamay-mayyizah');
 
 Route::get('/services', [PageController::class, 'services'])->name('services');
 Route::get('/sectors', [PageController::class, 'sectors'])->name('sectors');

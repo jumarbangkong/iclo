@@ -68,7 +68,7 @@ class GenerateSitemap extends Command
                 'syarif-hidayat', 'ambi-pradiptha', 'floren-wahyu-purwanto', 'ikomatussunniah',
                 'era-catur-prasetya', 'nadira-aulia-rulyani', 'agung-satrio-wicaksono',
                 'bayu-arie-fianto', 'nayla-adila-taqiyya', 'muhammad-nur-ar-royyan',
-                'shiska-prabawaningtyas',
+                'shiska-prabawaningtyas', 'mamay-mayyizah',
             ];
             foreach ($experts as $slug) {
                 $sitemap->add(

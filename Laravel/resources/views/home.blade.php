@@ -611,6 +611,20 @@
                     </div>
                 </div>
             </a>
+            
+            <!-- Expert: Mamay Mayyizah -->
+            <a href="{{ route('experts.mamay-mayyizah') }}" style="text-decoration: none; color: inherit; display: block;">
+                <div class="expert-card">
+                    <div class="expert-photo-wrapper">
+                        <img src="{{ asset('images/mamay.jpg') }}" alt="Mamay Mayyizah" class="expert-photo elegant-filter" style="object-position: top center;">
+                    </div>
+                    <div class="expert-info">
+                        <div class="expert-role" style="font-weight: 600; font-size: 13px; color: var(--accent); margin-bottom: 4px;">@if(app()->getLocale() === 'id') Spesialis Akuntansi & Keuangan @else Accounting & Finance Specialist @endif</div>
+                        <h3 class="expert-name">Mamay Mayyizah</h3>
+                        <p class="expert-bio" style="font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-top: 8px;">@if(app()->getLocale() === 'id') Profesional akuntansi dan keuangan dengan pengalaman dalam pelaporan keuangan, perpajakan, audit, dan konsultasi bisnis. @else Accounting and finance professional with experience in financial reporting, taxation, auditing, and business advisory services. @endif</p>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </section>
